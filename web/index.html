@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="silver-ink">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Antigravity Launcher</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cpath d='M144.248 149.062c7.5 5.626 18.75 1.876 8.437-8.437-30.937-30-24.375-112.5-62.812-112.5-38.438 0-31.875 82.5-62.813 112.5-11.25 11.25.938 14.063 8.438 8.437 29.062-19.687 27.187-54.375 54.375-54.375 27.187 0 25.312 34.688 54.375 54.375Z' fill='%23f8fafc'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Be+Vietnam+Pro:wght@400;500;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="stage-canvas"></canvas>
+
+  <!-- Thanh trên -->
+  <header class="topbar">
+    <div class="tb-left">
+      <span class="tb-brand" data-fall>Antigravity <span class="tb-dim">launcher <span id="tb-version">v3</span></span></span>
+      <span class="tb-meta" id="tb-who" data-fall>operator @ host</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-stat" data-fall><span class="tb-k">CPU</span> <span id="tb-cpu-spark" class="tb-spark">▁▁▁▁▁▁▁▁▁▁</span> <span id="tb-cpu">0%</span></span>
+      <span class="tb-stat" data-fall><span class="tb-k">RAM</span> <span id="tb-ram">0 / 0 GB</span></span>
+      <span class="tb-stat" data-fall><span class="tb-k" id="tb-pwr-k">AC</span> <span id="tb-pwr">100%</span></span>
+      <span class="tb-stat tb-clock" id="tb-clock" data-fall>00:00:00</span>
+      <nav class="tb-keys">
+        <button class="key-btn" id="btn-theme" data-fall title="Đổi màu"><kbd>T</kbd><span>Màu</span></button>
+        <button class="key-btn" id="btn-mute" data-fall title="Bật / tắt âm thanh"><kbd>M</kbd><span id="mute-label">Tiếng</span></button>
+        <button class="key-btn" id="btn-settings" data-fall title="Cài đặt"><kbd>S</kbd><span>Cài đặt</span></button>
+        <button class="key-btn key-close" id="btn-exit" data-fall title="Đóng"><kbd>Esc</kbd><span>Đóng</span></button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Đồng hồ trọng lực: 9.81 → 0 khi nạp, lật âm lúc cất cánh -->
+  <div class="gauge" id="gauge">
+    <div class="gauge-k" data-fall>Trọng lực tại đây</div>
+    <div class="gauge-v" data-fall><span id="g-val">9.81</span><small>m/s²</small></div>
+  </div>
+
+  <!-- Mặt đất: 3 cột dưới đường sàn -->
+  <section class="ground" id="ground">
+    <div class="col">
+      <div class="col-label" data-fall><span class="col-n">01</span>Mở bằng</div>
+      <div class="rows" id="target-list"></div>
+    </div>
+
+    <div class="col">
+      <div class="col-label" data-fall><span class="col-n">02</span>Thư mục gần đây <span class="col-hint">· chọn để mở thẳng vào IDE</span></div>
+      <div class="rows" id="ws-list"></div>
+    </div>
+
+    <div class="col col-action">
+      <div class="col-label" data-fall><span class="col-n">03</span><span id="action-label">Cất cánh</span></div>
+
+      <div class="action-body" id="action-hold">
+        <button class="hold-btn" id="hold-btn" data-fall>
+          <span class="hold-fill" aria-hidden="true"></span>
+          <span class="hold-text">
+            <span class="hold-main" id="hold-main">Giữ <kbd>Space</kbd></span>
+            <span class="hold-pct"><span id="hold-pct">0</span><small>%</small></span>
+          </span>
+        </button>
+        <div class="action-sub" data-fall>hoặc giữ chuột ở chỗ trống · <kbd>Enter</kbd> bay luôn</div>
+      </div>
+
+      <div class="action-body hidden" id="action-pin">
+        <div class="pin-row" id="pin-row" data-fall><i></i><i></i><i></i><i></i></div>
+        <div class="digit-row" id="digit-row" data-fall></div>
+        <div class="action-sub" id="pin-sub" data-fall>Gõ 4 số. Mỗi số đúng, chữ nhấc lên một nấc.</div>
+      </div>
+
+      <div class="action-body action-auto-zone hidden" id="action-auto">
+        <div class="auto-main" data-fall>
+          <span class="auto-what">Tự mở <b id="auto-target">Antigravity</b><span class="auto-paused-tag">tạm dừng</span></span>
+          <span class="auto-count"><span id="auto-count">4.0</span><small>s</small></span>
+        </div>
+        <div class="auto-bar" data-fall><i></i></div>
+        <div class="action-sub" data-fall>Chọn app khác ở cột 01 · rê chuột lên lựa chọn để tạm dừng · <kbd>Enter</kbd> mở ngay · <button class="link-btn" id="auto-hold">tự giữ Space</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dòng chữ dưới logo lúc lơ lửng -->
+  <div class="reveal-caption" id="reveal-caption"></div>
+
+  <!-- Cài đặt -->
+  <div class="drawer-backdrop hidden" id="drawer-backdrop"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h3>Cài đặt</h3>
+      <button class="key-btn" id="btn-close-settings"><kbd>Esc</kbd><span>Đóng</span></button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="set">
+        <div class="set-label">Màu</div>
+        <div class="swatches" id="set-themes"></div>
+      </div>
+
+      <div class="set">
+        <div class="set-label">Cách cất cánh</div>
+        <div class="seg" id="set-auth">
+          <button data-auth-opt="biometric">Giữ phím</button>
+          <button data-auth-opt="pin">Mã PIN</button>
+          <button data-auth-opt="auto">Tự động</button>
+        </div>
+      </div>
+
+      <div class="set" id="set-delay-wrap">
+        <div class="set-label">Chờ trước khi tự mở</div>
+        <div class="seg" id="set-delay">
+          <button data-delay-opt="2">2 giây</button>
+          <button data-delay-opt="4">4 giây</button>
+          <button data-delay-opt="6">6 giây</button>
+        </div>
+      </div>
+
+      <div class="set">
+        <div class="set-label">Giọng đọc</div>
+        <div class="seg" id="set-voice">
+          <button data-voice-opt="en">Anh</button>
+          <button data-voice-opt="vi">Việt</button>
+          <button data-voice-opt="off">Tắt</button>
+        </div>
+      </div>
+
+      <div class="set set-row">
+        <label class="set-label" for="input-ambient">Nhạc nền</label>
+        <label class="toggle"><input type="checkbox" id="input-ambient" /><span></span></label>
+      </div>
+
+      <div class="set">
+        <div class="set-row">
+          <label class="set-label" for="input-volume">Âm lượng</label>
+          <span class="set-val" id="volume-val">85%</span>
+        </div>
+        <input class="range" id="input-volume" type="range" min="0" max="100" value="85" />
+      </div>
+
+      <div class="set">
+        <label class="set-label" for="input-operator">Tên hiển thị</label>
+        <input class="field" id="input-operator" type="text" maxlength="20" placeholder="Để trống = tên Windows" />
+      </div>
+
+      <div class="set">
+        <label class="set-label" for="input-pin">Mã PIN (4 số)</label>
+        <input class="field field-mono" id="input-pin" type="password" inputmode="numeric" maxlength="4" placeholder="2026" />
+      </div>
+    </div>
+
+    <div class="drawer-foot">
+      <button class="btn-ghost" id="btn-replay">Xem lại intro</button>
+      <button class="btn-solid" id="btn-save-settings">Lưu</button>
+    </div>
+  </aside>
+
+  <script src="audio-engine.js"></script>
+  <script src="gravity-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "target": "antigravity",
+  "targets": {
+    "antigravity": {
+      "label": "Antigravity",
+      "path": "%LOCALAPPDATA%\\Programs\\antigravity\\Antigravity.exe",
+      "args": ["--remote-debugging-port=0"]
+    },
+    "antigravity_ide": {
+      "label": "Antigravity IDE",
+      "path": "%LOCALAPPDATA%\\Programs\\Antigravity IDE\\Antigravity IDE.exe"
+    },
+    "antigravity_tools": {
+      "label": "Antigravity Tools",
+      "path": "%LOCALAPPDATA%\\Antigravity Tools\\antigravity-tools.exe"
+    }
+  },
+  "theme": "silver-ink",
+  "voice": "en",
+  "auth_mode": "auto",
+  "auto_delay": 4,
+  "pin_code": "2026",
+  "operator_name": "",
+  "volume": 0.85,
+  "muted": false,
+  "ambient_pulse": true
+}

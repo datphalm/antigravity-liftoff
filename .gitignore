@@ -1,0 +1,15 @@
+# Cấu hình & sao lưu cá nhân (tạo tự động khi chạy)
+config.json
+original_shortcuts_backup.json
+*.lnk
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Công cụ / rác
+.claude/
+backup_v2/
+Thumbs.db
+desktop.ini
