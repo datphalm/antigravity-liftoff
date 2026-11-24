@@ -78,7 +78,7 @@ Dòng lệnh có `--target antigravity_ide`, `--preview` (không mở app), `--w
 
 ## Theme Silver Ink trong Antigravity
 
-Cái khung chat có viền ánh sao, avatar và cô gái manga nhìn theo chuột trong video là theme [antigravity-silver-ink-theme](https://github.com/wwm100107-creator/antigravity-silver-ink-theme) của một bạn khác. Theme gắn vào Antigravity qua cổng debug, nên `config.example.json` đã bật sẵn `--remote-debugging-port=0` khi mở Antigravity. Cổng là ngẫu nhiên và chỉ mở trong máy, nhưng nếu không dùng theme thì xoá dòng `args` đi cho gọn.
+theme [antigravity-silver-ink-theme](https://github.com/wwm100107-creator/antigravity-silver-ink-theme) của một bạn khác. Theme gắn vào Antigravity qua cổng debug, nên `config.example.json` đã bật sẵn `--remote-debugging-port=0` khi mở Antigravity. Cổng là ngẫu nhiên và chỉ mở trong máy, nhưng nếu không dùng theme thì xoá dòng `args` đi cho gọn.
 
 Bản Ultra của theme đẹp nhưng nặng. Mình đã đào vào xem vì sao rồi vá lại trong [`extras/silver-ink-perf`](extras/silver-ink-perf), hiệu ứng giữ nguyên mà tải giảm một nửa:
 
